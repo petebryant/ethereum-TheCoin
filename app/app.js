@@ -1,23 +1,38 @@
 	window.onload = function() {
 	var accounts = web3.eth.accounts;
   var coin = TheCoin.deployed();
-  var account;
+  var account = accounts[0];;
   var balance;
-
-  $("#coinAddress").html(coin.address);
 
   function setStatus(message) {
     $("#status").html(message);
   };
 
   function initialValues() {
-    coin.balanceOf.call(accounts[0]).then(function(value) {
-      $("#balance").html = value.valueOf();
-    }).catch(function(e) {
-      console.log(e);
-      setStatus("Error getting balance; see log.");
+    coin.name.call().then(
+      function(name) { 
+				$("#name").html(name); 
+        return coin.balanceOf.call(account, {from: account}).then(
+          function(balance) { 
+            $("#balance").html(balance.valueOf());    
+            return coin.symbol.call().then(
+              function(symbol){
+                $("#symbol").html(symbol);    
+                return coin.decimals.call().then(
+                  function(decimals){
+                    $("#decimals").html(decimals.valueOf()); 
+                    return;
+            });
+          });
+        });
+      }).catch(function(e) {
+        console.log(e);
+        setStatus("Error getting balance; see log.");
     });
-  };
+	};
 
- initialValues();
+
+  $("#coinAddress").html(coin.address);
+
+  initialValues();
 };
