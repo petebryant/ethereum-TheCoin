@@ -17,6 +17,10 @@ contract('TheCoin', function(accounts) {
           }).then(function(){
             return coin.symbol.call().then(function(symbol){
             assert.equal(symbol, "#", "the symbol unit wasn't #");
+          }).then(function(){
+            return coin.owner.call().then(function(owner){
+              assert.equal(owner,accounts[0], "not the expected owner " + owner);
+            });
           });
         });
       });
@@ -106,4 +110,19 @@ contract('TheCoin', function(accounts) {
       assert.equal(account_two_ending_balance, account_two_starting_balance + amount, "Amount wasn't correctly sent to the receiver");
     });
   });
+  it("should transfer ownership by owner", function() {
+    var coin = TheCoin.deployed();
+    coin.transferOwnership(accounts[1], {from: accounts[0]});
+    return coin.owner.call().then(
+      function(newOwner){
+          assert.equal(newOwner, accounts[1],"Ownership was not changed correctly");
+      });
+  });   
+  it("should transfer ownership by owner only", function() {
+    var coin = TheCoin.deployed();
+    return coin.transferOwnership(accounts[1], {from: accounts[1]}).then(
+      function(result){
+          assert.isTrue(result,"Ownership was incorrectly chnaged by non-owner");
+      });
+  });  
 });
