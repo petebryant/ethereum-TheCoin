@@ -14,15 +14,18 @@ contract TheCoin {
         symbol = tokenSymbol;
     }
 
-    function transfer(address to, uint256 value){
+    function transfer(address to, uint256 value) public returns(bool result) {
 
         if (balanceOf[msg.sender] < value || balanceOf[to] + value < balanceOf[to]){
-            throw;
+            msg.sender.send(value);
+            return false;
         }
 
         balanceOf[msg.sender] -= value;
         balanceOf[to] += value;
 
         Transfer(msg.sender, to , value);
+
+        return true;
     }
 }

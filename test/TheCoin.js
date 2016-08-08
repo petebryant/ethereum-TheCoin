@@ -22,9 +22,29 @@ contract('TheCoin', function(accounts) {
       });
     });
   });
+  it("should return false if value greater than balance", function() {
+    var coin = TheCoin.deployed();
+    var account_one = accounts[0];
+    var account_two = accounts[1];
+    var amount = 22000000;
+    return coin.transfer.call(account_two, amount, {from: account_one}).then(
+      function(result){
+        var isTrue = !result;
+          assert.isTrue(isTrue,"failed call didn't return false");
+      });
+  });
+    it("should return true if transfer is successful", function() {
+    var coin = TheCoin.deployed();
+    var account_one = accounts[0];
+    var account_two = accounts[1];
+    var amount = 10;
+    return coin.transfer.call(account_two, amount, {from: account_one}).then(
+      function(result){
+          assert.isTrue(result,"successful tx didn't return true");
+      });
+  });
   it("shouldn't tranfers if value greater than balance", function() {
     var coin = TheCoin.deployed();
-    // TODO need to catchthe throw some how...
     // Get initial balances of first and second account.
     var account_one = accounts[0];
     var account_two = accounts[1];
