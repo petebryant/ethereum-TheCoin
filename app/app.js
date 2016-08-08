@@ -12,16 +12,20 @@
     coin.name.call().then(
       function(name) { 
 				$("#name").html(name); 
-        return coin.balanceOf.call(account, {from: account}).then(
-          function(balance) { 
-            $("#balance").html(balance.valueOf());    
-            return coin.symbol.call().then(
-              function(symbol){
-                $("#symbol").html(symbol);    
-                return coin.decimals.call().then(
-                  function(decimals){
-                    $("#decimals").html(decimals.valueOf()); 
-                    return;
+        return coin.owner.call().then(
+          function(owner){
+            $("#owner").html(owner); 
+          return coin.balanceOf.call(account, {from: account}).then(
+            function(balance) { 
+              $("#balance").html(balance.valueOf());    
+              return coin.symbol.call().then(
+                function(symbol){
+                  $("#symbol").html(symbol);    
+                  return coin.decimals.call().then(
+                    function(decimals){
+                      $("#decimals").html(decimals.valueOf()); 
+                      return;
+              });
             });
           });
         });

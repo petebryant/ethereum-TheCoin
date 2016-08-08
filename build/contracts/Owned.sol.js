@@ -206,13 +206,13 @@ var Web3 = require("web3");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("TheCoin error: Please call setProvider() first before calling new().");
+      throw new Error("Owned error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("TheCoin error: contract binary not set. Can't deploy new instance.");
+      throw new Error("Owned error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -231,7 +231,7 @@ var Web3 = require("web3");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("TheCoin contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of TheCoin: " + unlinked_libraries);
+      throw new Error("Owned contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of Owned: " + unlinked_libraries);
     }
 
     var self = this;
@@ -272,7 +272,7 @@ var Web3 = require("web3");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to TheCoin.at(): " + address);
+      throw new Error("Invalid address passed to Owned.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -283,7 +283,7 @@ var Web3 = require("web3");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: TheCoin not deployed or address not set.");
+      throw new Error("Cannot find deployed address: Owned not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -327,85 +327,11 @@ var Web3 = require("web3");
       {
         "constant": true,
         "inputs": [],
-        "name": "name",
-        "outputs": [
-          {
-            "name": "",
-            "type": "string"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "decimals",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint8"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "balanceOf",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
         "name": "owner",
         "outputs": [
           {
             "name": "",
             "type": "address"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "symbol",
-        "outputs": [
-          {
-            "name": "",
-            "type": "string"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "to",
-            "type": "address"
-          },
-          {
-            "name": "value",
-            "type": "uint256"
-          }
-        ],
-        "name": "transfer",
-        "outputs": [
-          {
-            "name": "result",
-            "type": "bool"
           }
         ],
         "type": "function"
@@ -423,53 +349,12 @@ var Web3 = require("web3");
         "type": "function"
       },
       {
-        "inputs": [
-          {
-            "name": "initialSupply",
-            "type": "uint256"
-          },
-          {
-            "name": "tokenName",
-            "type": "string"
-          },
-          {
-            "name": "decimalUnits",
-            "type": "uint8"
-          },
-          {
-            "name": "tokenSymbol",
-            "type": "string"
-          }
-        ],
+        "inputs": [],
         "type": "constructor"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "name": "from",
-            "type": "address"
-          },
-          {
-            "indexed": true,
-            "name": "to",
-            "type": "address"
-          },
-          {
-            "indexed": false,
-            "name": "value",
-            "type": "uint256"
-          }
-        ],
-        "name": "Transfer",
-        "type": "event"
       }
     ],
-    "unlinked_binary": "0x606060405260405161052738038061052783398101604052805160805160a05160c05192939182019290910160008054600160a060020a03191633179055600160a060020a03331660009081526001602081815260408320879055600280548751948290529093601f60001994831615610100029490940190911684900483018290047f405787fa12a823e0f2b7631cc41b3ba8828b3321ca811111fa75cd3aa3bb5ace9081019391929091908801908390106100f357805160ff19168380011785555b506101239291505b808211156101a757600081556001016100cb565b50505050505061034c806101db6000396000f35b828001600101855582156100c3579182015b828111156100c3578251826000505591602001919060010190610105565b50506004805460ff1916831790556003805482516000839052602060026001841615610100026000190190931692909204601f9081018390047fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b908101939091908601908390106101ab57805160ff19168380011785555b506100df9291506100cb565b5090565b8280016001018555821561019b579182015b8281111561019b5782518260005055916020019190600101906101bd56606060405236156100615760e060020a600035046306fdde038114610063578063313ce567146100bd57806370a08231146100c95780638da5cb5b146100e157806395d89b41146100f3578063a9059cbb1461014f578063f2fde38b146101b6575b005b6101d760028054602060018216156101000260001901909116829004601f8101829004909102608090810160405260608281529291908282801561028e5780601f106102635761010080835404028352916020019161028e565b61024560045460ff1681565b61024560043560016020526000908152604090205481565b610245600054600160a060020a031681565b6101d7600380546020601f6002600019600185161561010002019093169290920491820181900402608090810160405260608281529291908282801561028e5780601f106102635761010080835404028352916020019161028e565b61024f60043560243533600160a060020a0316600090815260016020526040812054829010806101905750600160a060020a03831681526040812054808301105b156102965733600160a060020a03168183606082818181858883f1506103439350505050565b61006160043560005433600160a060020a0390811691161461034957610002565b60405180806020018281038252838181518152602001915080519060200190808383829060006004602084601f0104600f02600301f150905090810190601f1680156102375780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6060908152602090f35b604080519115158252519081900360200190f35b820191906000526020600020905b81548152906001019060200180831161027157829003601f168201915b505050505081565b816001600050600033600160a060020a03168152602001908152602001600020600082828250540392505081905550816001600050600085600160a060020a0316815260200190815260200160002060008282825054019250508190555082600160a060020a031633600160a060020a03167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef846040518082815260200191505060405180910390a35060015b92915050565b5056",
-    "updated_at": 1470668683994,
-    "links": {},
-    "address": "0xaa6779005dca58173cd921a30f36b3e2ec5f4a99"
+    "unlinked_binary": "0x606060405260008054600160a060020a03191633179055607a8060226000396000f3606060405260e060020a60003504638da5cb5b81146024578063f2fde38b146042575b005b606d60005473ffffffffffffffffffffffffffffffffffffffff1681565b60226004356000543373ffffffffffffffffffffffffffffffffffffffff9081169116146077576002565b6060908152602090f35b5056",
+    "updated_at": 1470668683989
   }
 };
 
@@ -535,7 +420,7 @@ var Web3 = require("web3");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "TheCoin";
+  Contract.contract_name   = Contract.prototype.contract_name   = "Owned";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
 
   var properties = {
@@ -572,6 +457,6 @@ var Web3 = require("web3");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.TheCoin = Contract;
+    window.Owned = Contract;
   }
 })();
