@@ -120,9 +120,10 @@ contract('TheCoin', function(accounts) {
   });   
   it("should transfer ownership by owner only", function() {
     var coin = TheCoin.deployed();
-    return coin.transferOwnership(accounts[1], {from: accounts[1]}).then(
-      function(result){
-          assert.isTrue(result,"Ownership was incorrectly chnaged by non-owner");
+    coin.transferOwnership(accounts[3], {from: accounts[2]})
+    return coin.owner.call().then(
+      function(newOwner){
+          assert.notEqual(newOwner, accounts[3],"Ownership was incorrectly chnaged by non-owner");
       });
   });  
 });
