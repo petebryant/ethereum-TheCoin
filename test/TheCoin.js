@@ -34,7 +34,7 @@ contract('TheCoin', function(accounts) {
     return coin.transfer.call(account_two, amount, {from: account_one}).then(
       function(result){
         var isTrue = !result;
-          assert.isTrue(isTrue,"failed call didn't return false");
+          assert.isTrue(isTrue,"failed transfer didn't return false");
       });
   });
     it("should return true if transfer is successful", function() {
@@ -124,6 +124,36 @@ contract('TheCoin', function(accounts) {
     return coin.owner.call().then(
       function(newOwner){
           assert.notEqual(newOwner, accounts[3],"Ownership was incorrectly chnaged by non-owner");
+          return coin.transferOwnership(accounts[0], {from: accounts[1]});
       });
   });  
+  it("should freeze account by owner", function() {
+    var coin = TheCoin.deployed();
+    coin.freezeAccount(accounts[4], true, {from: accounts[0]});
+    return coin.frozenAccount.call(accounts[4], {from: accounts[0]}).then(
+      function(frozen){
+          assert.isTrue(frozen, "Account was not frozen correctly");
+      });
+  });   
+  it("should freeze account by owner only", function() {
+    var coin = TheCoin.deployed();
+    coin.freezeAccount(accounts[5], true, {from: accounts[0]});
+    return coin.frozenAccount.call(accounts[5], {from: accounts[1]}).then(
+      function(frozen){
+          assert.isTrue(frozen, "Account was frozen incorrectly");
+      });
+  });   
+    it("shouldn't transfer from a frozen account", function() {
+    var coin = TheCoin.deployed();
+
+    return coin.transfer(accounts[1], 10, {from: accounts[0]}).then(function(result) {
+      return coin.freezeAccount(accounts[1], true, {from: accounts[0]});
+      }).then(function() {
+      return coin.transfer.call(accounts[2], 5, {from: accounts[1]});
+      }).then(function(txed) {
+        var isTrue = !txed;
+        assert.isTrue(isTrue,"failed transfer didn't return false");
+      return coin.freezeAccount(accounts[1], false, {from: accounts[0]});
+    });
+  }); 
 });
