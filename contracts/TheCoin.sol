@@ -17,16 +17,13 @@ contract TheCoin is Owned {
         uint256 initialSupply, 
         string tokenName, 
         uint8 decimalUnits, 
-        string tokenSymbol,
-        address centralMinter) {
+        string tokenSymbol) {
 
         totalSupply = initialSupply;
         balanceOf[msg.sender] = initialSupply;
         name = tokenName;
         decimals = decimalUnits;
         symbol = tokenSymbol;
-
-        if (centralMinter != 0) owner = centralMinter;
     }
 
     function freezeAccount(address target, bool freeze) onlyOwner {
