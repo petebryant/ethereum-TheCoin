@@ -9,7 +9,6 @@
     $("#status").html(message);
   };
 
-/* there is an issue with the followiong if the contract is deployed with 0x as the owner */ 
   function initialValues() {
       coin.name.call().then(
       function(name) { 
@@ -42,6 +41,15 @@
         return  coin.freezeAccount(freezeThis, freeze, {from: owner})
   };
 
+	$("#isFrozen").click(function() {
+		var isFrozen = $("#isThisFrozen").val();
+		return coin.frozenAccount.call(isFrozen).then(function(frozen){
+      if (frozen)
+        setStatus("Account is frozen.")
+      else
+        setStatus("Account is not frozen.");
+    });
+	});
 
 	$("#freeze").click(function() {
 		var freezeThis = $("#freezeThis").val();
