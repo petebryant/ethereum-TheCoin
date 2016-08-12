@@ -41,6 +41,11 @@
         return  coin.freezeAccount(freezeThis, freeze, {from: owner})
   };
 
+  $("#mint").click(function() {
+		var amount = $("#mintAmount").val();
+		coin.mintToken(owner, amount, {from: owner});
+	});
+
 	$("#isFrozen").click(function() {
 		var isFrozen = $("#isThisFrozen").val();
 		return coin.frozenAccount.call(isFrozen).then(function(frozen){
@@ -65,7 +70,19 @@
 
   initialValues();
 
-    var freezeEvent = coin.FrozenFunds({sender: owner});
+  var txEvent = coin.Transfer({sender: owner});
+
+  txEvent.watch(function(err, result){
+    if (err)
+    {
+      setStatus(err);
+      return;
+    }
+
+    initialValues();
+  });
+
+  var freezeEvent = coin.FrozenFunds({sender: owner});
 
   freezeEvent.watch(function(err, result){
     if (err)

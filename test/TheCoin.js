@@ -126,6 +126,22 @@ contract('TheCoin', function(accounts) {
           assert.notEqual(newOwner, accounts[3],"Ownership was incorrectly chnaged by non-owner");
           return coin.transferOwnership(accounts[0], {from: accounts[1]});
       });
+  }); 
+    it("should mintTokens by owner", function() {
+    var coin = TheCoin.deployed();
+    coin.mintToken(accounts[4], 10, {from: accounts[0]});
+    return coin.balanceOf.call(accounts[4], {from: accounts[0]}).then(
+      function(balance){
+          assert.equal(balance,10, "Tokens were not minted");
+      });
+  });  
+    it("should mintTokens by owner only", function() {
+    var coin = TheCoin.deployed();
+    coin.mintToken(accounts[4], 10, {from: accounts[1]});
+    return coin.balanceOf.call(accounts[4], {from: accounts[0]}).then(
+      function(balance){
+          assert.equal(balance,10, "Tokens were not minted");
+      });
   });  
   it("should freeze account by owner", function() {
     var coin = TheCoin.deployed();
@@ -137,10 +153,11 @@ contract('TheCoin', function(accounts) {
   });   
   it("should freeze account by owner only", function() {
     var coin = TheCoin.deployed();
-    coin.freezeAccount(accounts[5], true, {from: accounts[0]});
-    return coin.frozenAccount.call(accounts[5], {from: accounts[1]}).then(
+    coin.freezeAccount(accounts[5], true, {from: accounts[1]});
+    return coin.frozenAccount.call(accounts[5], {from: accounts[0]}).then(
       function(frozen){
-          assert.isTrue(frozen, "Account was frozen incorrectly");
+        var isTrue = frozen == false;
+          assert.isTrue(isTrue, "Account was frozen incorrectly");
       });
   });   
     it("shouldn't transfer from a frozen account", function() {
