@@ -31,7 +31,8 @@ contract('TheCoin', function(accounts) {
     var account_one = accounts[0];
     var account_two = accounts[1];
     var amount = 22000000;
-    return coin.transfer.call(account_two, amount, {from: account_one}).then(
+    coin.approveAccount(account_two, true, {from: account_one});
+    coin.transfer.call(account_two, amount, {from: account_one}).then(
       function(result){
         var isTrue = !result;
           assert.isTrue(isTrue,"failed transfer didn't return false");
@@ -42,7 +43,8 @@ contract('TheCoin', function(accounts) {
     var account_one = accounts[0];
     var account_two = accounts[1];
     var amount = 10;
-    return coin.transfer.call(account_two, amount, {from: account_one}).then(
+    coin.approveAccount(account_two, true, {from: account_one});
+    coin.transfer.call(account_two, amount, {from: account_one}).then(
       function(result){
           assert.isTrue(result,"successful tx didn't return true");
       });
@@ -60,23 +62,24 @@ contract('TheCoin', function(accounts) {
 
     var amount = 22000000;
 
-    return coin.balanceOf.call(account_one).then(function(balance) {
-      account_one_starting_balance = balance.toNumber();
-      return coin.balanceOf.call(account_two);
-    }).then(function(balance) {
-      account_two_starting_balance = balance.toNumber();
-      return coin.transfer(account_two, amount, {from: account_one});
-    }).then(function() {
-      return coin.balanceOf.call(account_one);
-    }).then(function(balance) {
-      account_one_ending_balance = balance.toNumber();
-      return coin.balanceOf.call(account_two);
-    }).then(function(balance) {
-      account_two_ending_balance = balance.toNumber();
+    coin.approveAccount(account_two, true, {from: account_one});
+    coin.balanceOf.call(account_one).then(function(balance) {
+        account_one_starting_balance = balance.toNumber();
+        return coin.balanceOf.call(account_two);
+      }).then(function(balance) {
+        account_two_starting_balance = balance.toNumber();
+        return coin.transfer(account_two, amount, {from: account_one});
+      }).then(function() {
+        return coin.balanceOf.call(account_one);
+      }).then(function(balance) {
+        account_one_ending_balance = balance.toNumber();
+        return coin.balanceOf.call(account_two);
+      }).then(function(balance) {
+        account_two_ending_balance = balance.toNumber();
 
-      assert.equal(account_one_ending_balance, account_one_starting_balance, "Amount was incorrectly taken from the sender");
-      assert.equal(account_two_ending_balance, account_two_starting_balance, "Amount was incorrectly sent to the receiver");
-    });
+        assert.equal(account_one_ending_balance, account_one_starting_balance, "Amount was incorrectly taken from the sender");
+        assert.equal(account_two_ending_balance, account_two_starting_balance, "Amount was incorrectly sent to the receiver");
+      });
   });  
   it("should transfer coin correctly", function() {
     var coin = TheCoin.deployed();
@@ -92,23 +95,24 @@ contract('TheCoin', function(accounts) {
 
     var amount = 10;
 
-    return coin.balanceOf.call(account_one).then(function(balance) {
-      account_one_starting_balance = balance.toNumber();
-      return coin.balanceOf.call(account_two);
-    }).then(function(balance) {
-      account_two_starting_balance = balance.toNumber();
-      return coin.transfer(account_two, amount, {from: account_one});
-    }).then(function() {
-      return coin.balanceOf.call(account_one);
-    }).then(function(balance) {
-      account_one_ending_balance = balance.toNumber();
-      return coin.balanceOf.call(account_two);
-    }).then(function(balance) {
-      account_two_ending_balance = balance.toNumber();
+    coin.approveAccount(account_two, true, {from: account_one});
+    coin.balanceOf.call(account_one).then(function(balance) {
+        account_one_starting_balance = balance.toNumber();
+        return coin.balanceOf.call(account_two);
+      }).then(function(balance) {
+        account_two_starting_balance = balance.toNumber();
+        return coin.transfer(account_two, amount, {from: account_one});
+      }).then(function() {
+        return coin.balanceOf.call(account_one);
+      }).then(function(balance) {
+        account_one_ending_balance = balance.toNumber();
+        return coin.balanceOf.call(account_two);
+      }).then(function(balance) {
+        account_two_ending_balance = balance.toNumber();
 
-      assert.equal(account_one_ending_balance, account_one_starting_balance - amount, "Amount wasn't correctly taken from the sender");
-      assert.equal(account_two_ending_balance, account_two_starting_balance + amount, "Amount wasn't correctly sent to the receiver");
-    });
+        assert.equal(account_one_ending_balance, account_one_starting_balance - amount, "Amount wasn't correctly taken from the sender");
+        assert.equal(account_two_ending_balance, account_two_starting_balance + amount, "Amount wasn't correctly sent to the receiver");
+      });
   });
   it("should transfer ownership by owner", function() {
     var coin = TheCoin.deployed();
@@ -160,7 +164,7 @@ contract('TheCoin', function(accounts) {
           assert.isTrue(isTrue, "Account was frozen incorrectly");
       });
   });   
-    it("shouldn't transfer from a frozen account", function() {
+  it("shouldn't transfer from a frozen account", function() {
     var coin = TheCoin.deployed();
 
     return coin.transfer(accounts[1], 10, {from: accounts[0]}).then(function(result) {
@@ -172,5 +176,13 @@ contract('TheCoin', function(accounts) {
         assert.isTrue(isTrue,"failed transfer didn't return false");
       return coin.freezeAccount(accounts[1], false, {from: accounts[0]});
     });
+  }); 
+    it("should approve account by owner", function() {
+    var coin = TheCoin.deployed();
+    coin.approveAccount(accounts[4], true, {from: accounts[0]});
+    return coin.approvedAccount.call(accounts[4], {from: accounts[0]}).then(
+      function(approved){
+          assert.isTrue(approved, "Account was not approved correctly");
+      });
   }); 
 });
