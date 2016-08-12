@@ -11,7 +11,7 @@ contract TheCoin is Owned {
     uint256 public totalSupply;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event FrozenFunds(address target, bool frozen);
+    event FrozenFunds(address indexed sender, address target, bool frozen);
 
     function TheCoin(
         uint256 initialSupply, 
@@ -28,7 +28,7 @@ contract TheCoin is Owned {
 
     function freezeAccount(address target, bool freeze) onlyOwner {
         frozenAccount[target] = freeze;
-        FrozenFunds(target, freeze);
+        FrozenFunds(msg.sender, target, freeze);
     }
 
     function mintToken(address target, uint256 mintedAmount) onlyOwner {

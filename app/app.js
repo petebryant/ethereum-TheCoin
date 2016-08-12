@@ -3,6 +3,7 @@
   var coin = TheCoin.deployed();
   var account = accounts[0];
   var balance;
+  var owner;
 
   function setStatus(message) {
     $("#status").html(message);
@@ -14,7 +15,8 @@
       function(name) { 
 				$("#name").html(name); 
         return coin.owner.call().then(
-          function(owner){
+          function(result){
+            owner = result;
             $("#owner").html(owner); 
           return coin.balanceOf.call(account).then(
             function(balance) { 
@@ -37,32 +39,9 @@
 	};
 
   function freezeAccount(freezeThis, freeze) {
-    var status = "";
-    coin.owner.call().then(
-      function(owner){
-        return  coin.freezeAccount(freezeThis, freeze, {from: owner}).then(
-      function(){
-          return coin.frozenAccount.call(freezeThis).then(
-          function(frozen){
-            if (freeze)
-            {
-              if (frozen)
-                setStatus("account was frozen");
-              else
-                setStatus("failed to freeze account");
-            }
-            else
-            {
-              if (!frozen)
-                setStatus("account was unfrozen");
-              else
-                setStatus("failed to unfreeze account");
-            }
-     	  });
-      });
-    });
-    return status;
+        return  coin.freezeAccount(freezeThis, freeze, {from: owner})
   };
+
 
 	$("#freeze").click(function() {
 		var freezeThis = $("#freezeThis").val();
@@ -77,4 +56,19 @@
   $("#coinAddress").html(coin.address);
 
   initialValues();
+
+    var freezeEvent = coin.FrozenFunds({sender: owner});
+
+  freezeEvent.watch(function(err, result){
+    if (err)
+    {
+      setStatus(err);
+      return;
+    }
+
+    if (result.args.frozen)
+      setStatus("account is frozen");
+    else
+      setStatus("account is not frozen");
+  });
 };
