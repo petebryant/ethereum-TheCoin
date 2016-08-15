@@ -76,31 +76,60 @@
 
   <hr/>
 
-    <div class="row">
+  <div class="row">
     <div class="col-md-10 col-md-offset-1">
       <h3>Accounts</h3>
     </div>
   </div>
 
   <div class="row">
-    <div class="col-md-10 col-md-offset-1">
+    <div class="col-md-5 col-md-offset-1">
       Account: <input type="text" id="isThisFrozen" />
       <button class="btn btn-default" id="isFrozen">Is Frozen</button>
     </div>  
+    <div class="col-md-5 col-md-offset-1">
+      Account: <input type="text" id="isThisApproved" />
+      <button class="btn btn-default" id="isApproved">Is Approved</button>
+    </div> 
   </div>
 
   <div class="row">
-    <div class="col-md-10 col-md-offset-1">
+    <div class="col-md-5 col-md-offset-1">
       Account: <input type="text" id="freezeThis" />
       <button class="btn btn-default" id="freeze">Freeze</button>
     </div>  
+    <div class="col-md-5 col-md-offset-1">
+      Account: <input type="text" id="approveThis" />
+      <button class="btn btn-default" id="approve">Approve</button>
+    </div>     
+  </div>
+
+  <div class="row">
+    <div class="col-md-5 col-md-offset-1">
+      Account: <input type="text" id="unfreezeThis" />
+      <button class="btn btn-default" id="unfreeze">Unfreeze</button>
+    </div>  
+    <div class="col-md-5 col-md-offset-1">
+      Account: <input type="text" id="balanceThis" />
+      <button class="btn btn-default" id="getBalance">Balance</button>
+    </div>     
+  </div>
+
+    <hr/>
+
+  <div class="row">
+    <div class="col-md-10 col-md-offset-1">
+      <h3>Transfer</h3>
+    </div>
   </div>
 
   <div class="row">
     <div class="col-md-10 col-md-offset-1">
-      Account: <input type="text" id="unfreezeThis" />
-      <button class="btn btn-default" id="unfreeze">Unfreeze</button>
+      Amount: <input type="text" id="sendThis" />
+      Account: <input type="text" id="toHere" />
+      <button class="btn btn-default" id="sentToken">Send</button>
     </div>  
   </div>
+
 </body>
 </html>

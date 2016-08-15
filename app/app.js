@@ -41,6 +41,10 @@
         return  coin.freezeAccount(freezeThis, freeze, {from: owner})
   };
 
+  function approveAccount(approveThis, approve) {
+      return  coin.approveAccount(approveThis, approve, {from: owner})
+  };
+
   $("#mint").click(function() {
 		var amount = $("#mintAmount").val();
 		coin.mintToken(owner, amount, {from: owner});
@@ -65,6 +69,38 @@
 		var unfreezeThis = $("#unfreezeThis").val();
 		freezeAccount(unfreezeThis, false);
 	});
+
+	$("#isApproved").click(function() {
+		var isApproved = $("#isThisApproved").val();
+		return coin.approvedAccount.call(isApproved).then(function(approved){
+      if (approved)
+        setStatus("Account is approved.")
+      else
+        setStatus("Account is not approved.");
+    });
+	});
+
+	$("#approve").click(function() {
+		var approveThis = $("#approveThis").val();
+		approveAccount(approveThis, true);
+	});  
+
+  $("#getBalance").click(function() {
+		var acc = $("#balanceThis").val();
+		return coin.balanceOf.call(acc).then(function(amt){
+      setStatus("Account has " + amt);
+    });
+	});
+
+  $("#sentToken").click(function() {
+		var amount = $("#sendThis").val();
+    var acc = $("#toHere").val();
+		return coin.transfer(acc, amount, {from: owner}).then(function(status){
+      return coin.balanceOf.call(acc).then(function(amt){
+      setStatus("New balance is " + amt);
+    });
+    });
+	});  
   
   $("#coinAddress").html(coin.address);
 
@@ -92,8 +128,23 @@
     }
 
     if (result.args.frozen)
-      setStatus("account is frozen");
+      setStatus("account has been frozen");
     else
-      setStatus("account is not frozen");
+      setStatus("account has not been frozen");
+  });
+
+  var approveEvent = coin.ApprovedAccount({sender: owner});
+
+  approveEvent.watch(function(err, result){
+    if (err)
+    {
+      setStatus(err);
+      return;
+    } 
+
+    if (result.args.appoved)
+      setStatus("account has been approved");
+    else
+      setStatus("account has not beeen approved");
   });
 };
