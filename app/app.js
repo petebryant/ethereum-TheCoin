@@ -96,6 +96,7 @@
 		var amount = $("#sendThis").val();
     var acc = $("#toHere").val();
 		return coin.transfer(acc, amount, {from: owner}).then(function(status){
+      if (status) alert();
       return coin.balanceOf.call(acc).then(function(amt){
       setStatus("New balance is " + amt);
     });
@@ -141,8 +142,8 @@
       setStatus(err);
       return;
     } 
-
-    if (result.args.appoved)
+alert(result.args.approved);
+    if (result.args.approved)
       setStatus("account has been approved");
     else
       setStatus("account has not beeen approved");

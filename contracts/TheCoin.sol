@@ -13,7 +13,7 @@ contract TheCoin is Owned {
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event FrozenFunds(address indexed sender, address target, bool frozen);
-    event ApprovedAccount(address indexed sender, address target, bool approve);
+    event ApprovedAccount(address indexed sender, address target, bool approved);
 
     function TheCoin(
         uint256 initialSupply, 
