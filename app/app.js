@@ -26,7 +26,15 @@
                   return coin.decimals.call().then(
                     function(decimals){
                       $("#decimals").html(decimals.valueOf()); 
-                      return;
+                      return coin.sellPrice.call().then(
+                        function(sell){
+                          $("#sell").html(sell.valueOf());
+                          return coin.buyPrice.call().then(
+                            function(buy){
+                              $("#buy").html(buy.valueOf());
+                              return;
+                            });
+                        });
               });
             });
           });
@@ -96,12 +104,29 @@
 		var amount = $("#sendThis").val();
     var acc = $("#toHere").val();
 		return coin.transfer(acc, amount, {from: owner}).then(function(status){
-      if (status) alert();
       return coin.balanceOf.call(acc).then(function(amt){
       setStatus("New balance is " + amt);
     });
     });
 	});  
+
+  $("#setPrices").click(function() {
+		var sell = $("#sellPrice").val();
+    var buy = $("#buyPrice").val();
+		
+    coin.setPrices(sell, buy, {from: owner}).then(
+      function(){
+        return coin.sellPrice.call().then(
+          function(sell){
+            $("#sell").html(sell.valueOf());
+            return coin.buyPrice.call().then(
+              function(buy){
+                $("#buy").html(buy.valueOf());
+                return;
+              });
+          });
+      });
+	}); 
   
   $("#coinAddress").html(coin.address);
 
@@ -142,7 +167,7 @@
       setStatus(err);
       return;
     } 
-alert(result.args.approved);
+
     if (result.args.approved)
       setStatus("account has been approved");
     else

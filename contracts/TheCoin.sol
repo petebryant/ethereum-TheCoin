@@ -8,8 +8,9 @@ contract TheCoin is Owned {
     string public name;
     string public symbol;
     uint8 public decimals;
-
     uint256 public totalSupply;
+    uint256 public sellPrice;
+    uint256 public buyPrice;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event FrozenFunds(address indexed sender, address target, bool frozen);
@@ -69,5 +70,40 @@ contract TheCoin is Owned {
         Transfer(msg.sender, to , value);
 
         return true;
+    }
+
+    function setPrices(uint256 newSellPrice, uint256 newBuyPrice) onlyOwner {
+        // TODO hook this up to a standard data feed to have a floating price
+        // http://github.com/ethereum/wiki/wiki/standardized_contract_apis#data-feed
+        sellPrice = newSellPrice;
+        buyPrice = newBuyPrice;
+    }
+
+    function buy() returns (uint amount){
+        amount = msg.value / buyPrice;
+
+        if (balanceOf[this] < amount) throw;
+
+        balanceOf[msg.sender] += amount;
+        balanceOf[this] -= amount;
+
+        Transfer(this, msg.sender, amount);
+
+        return amount;
+    }
+
+    function sell(uint amount) returns(uint revenue){
+        if (balanceOf[msg.sender] < amount) throw;
+
+        balanceOf[this] += amount;
+        balanceOf[msg.sender] -= amount;
+        revenue = amount * sellPrice;
+
+        if (!msg.sender.send(revenue)){
+            throw;
+        } else {
+            Transfer(msg.sender, this, amount);
+            return revenue;
+        }
     }
 }

@@ -177,7 +177,7 @@ contract('TheCoin', function(accounts) {
       return coin.freezeAccount(accounts[1], false, {from: accounts[0]});
     });
   }); 
-    it("should approve account by owner", function() {
+  it("should approve account by owner", function() {
     var coin = TheCoin.deployed();
     coin.approveAccount(accounts[4], true, {from: accounts[0]});
     return coin.approvedAccount.call(accounts[4], {from: accounts[0]}).then(
@@ -185,4 +185,28 @@ contract('TheCoin', function(accounts) {
           assert.isTrue(approved, "Account was not approved correctly");
       });
   }); 
+  it("should set prices by owner", function() {
+    var coin = TheCoin.deployed();
+    coin.setPrices(42, 21, {from: accounts[0]});
+    return coin.sellPrice.call({from: accounts[0]}).then(
+      function(sell){
+          assert.equal(sell, 42, "Sell price not set correctly");
+          return coin.buyPrice.call({from: accounts[0]}).then(
+            function(buy){
+              assert.equal(buy, 21, "Buy price not set correctly");
+          });
+      });
+  });
+  it("should set prices by owner only", function() {
+    var coin = TheCoin.deployed();
+    coin.setPrices(43, 22, {from: accounts[1]});
+    return coin.sellPrice.call({from: accounts[0]}).then(
+      function(sell){
+          assert.notEqual(sell, 43, "Sell price not set correctly");
+          return coin.buyPrice.call({from: accounts[0]}).then(
+            function(buy){
+              assert.notEqual(buy, 22, "Buy price not set correctly");
+          });
+      });
+  });  
 });
