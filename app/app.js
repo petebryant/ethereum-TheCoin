@@ -32,7 +32,11 @@
                           return coin.buyPrice.call().then(
                             function(buy){
                               $("#buy").html(buy.valueOf());
-                              return;
+                              return coin.contractBalance.call().then(
+                                function(balance){
+                                  $("#inContract").html(balance.valueOf());
+                                  return;
+                                });
                             });
                         });
               });

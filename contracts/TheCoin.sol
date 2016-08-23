@@ -79,10 +79,17 @@ contract TheCoin is Owned {
         buyPrice = newBuyPrice;
     }
 
-    function buy() returns (uint amount){
-        amount = msg.value / buyPrice;
+    function contractBalance() public returns (uint bal){
+        return this.balance;
+    }
 
-        if (balanceOf[this] < amount) throw;
+
+    function buy() public returns(uint){
+        var amount = msg.value / buyPrice;
+
+        if (balanceOf[this] < amount) {
+            return 0;
+        }
 
         balanceOf[msg.sender] += amount;
         balanceOf[this] -= amount;
@@ -93,17 +100,19 @@ contract TheCoin is Owned {
     }
 
     function sell(uint amount) returns(uint revenue){
-        if (balanceOf[msg.sender] < amount) throw;
+        if (balanceOf[msg.sender] < amount) {
+            return 0;
+        }
 
         balanceOf[this] += amount;
         balanceOf[msg.sender] -= amount;
         revenue = amount * sellPrice;
 
         if (!msg.sender.send(revenue)){
-            throw;
+            return 0;
         } else {
             Transfer(msg.sender, this, amount);
             return revenue;
-        }
+        } 
     }
 }

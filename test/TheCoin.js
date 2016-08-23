@@ -32,8 +32,7 @@ contract('TheCoin', function(accounts) {
     var account_two = accounts[1];
     var amount = 22000000;
     coin.approveAccount(account_two, true, {from: account_one});
-    coin.transfer.call(account_two, amount, {from: account_one}).then(
-      function(result){
+    coin.transfer.call(account_two, amount, {from: account_one}).then(function(result) {
         var isTrue = !result;
           assert.isTrue(isTrue,"failed transfer didn't return false");
       });
@@ -44,8 +43,7 @@ contract('TheCoin', function(accounts) {
     var account_two = accounts[1];
     var amount = 10;
     coin.approveAccount(account_two, true, {from: account_one});
-    coin.transfer.call(account_two, amount, {from: account_one}).then(
-      function(result){
+    coin.transfer.call(account_two, amount, {from: account_one}).then(function(result) {
           assert.isTrue(result,"successful tx didn't return true");
       });
   });
@@ -64,22 +62,18 @@ contract('TheCoin', function(accounts) {
 
     coin.approveAccount(account_two, true, {from: account_one});
     coin.balanceOf.call(account_one).then(function(balance) {
-        account_one_starting_balance = balance.toNumber();
-        return coin.balanceOf.call(account_two);
-      }).then(function(balance) {
+      account_one_starting_balance = balance.toNumber();
+      return coin.balanceOf.call(account_two);}).then(function(balance) {
         account_two_starting_balance = balance.toNumber();
-        return coin.transfer(account_two, amount, {from: account_one});
-      }).then(function() {
-        return coin.balanceOf.call(account_one);
-      }).then(function(balance) {
+      return coin.transfer(account_two, amount, {from: account_one});}).then(function() {
+      return coin.balanceOf.call(account_one);}).then(function(balance) {
         account_one_ending_balance = balance.toNumber();
-        return coin.balanceOf.call(account_two);
-      }).then(function(balance) {
+      return coin.balanceOf.call(account_two);}).then(function(balance) {
         account_two_ending_balance = balance.toNumber();
 
         assert.equal(account_one_ending_balance, account_one_starting_balance, "Amount was incorrectly taken from the sender");
         assert.equal(account_two_ending_balance, account_two_starting_balance, "Amount was incorrectly sent to the receiver");
-      });
+    });
   });  
   it("should transfer coin correctly", function() {
     var coin = TheCoin.deployed();
@@ -97,105 +91,90 @@ contract('TheCoin', function(accounts) {
 
     coin.approveAccount(account_two, true, {from: account_one});
     coin.balanceOf.call(account_one).then(function(balance) {
-        account_one_starting_balance = balance.toNumber();
-        return coin.balanceOf.call(account_two);
-      }).then(function(balance) {
+      account_one_starting_balance = balance.toNumber();
+      return coin.balanceOf.call(account_two);}).then(function(balance) {
         account_two_starting_balance = balance.toNumber();
-        return coin.transfer(account_two, amount, {from: account_one});
-      }).then(function() {
-        return coin.balanceOf.call(account_one);
-      }).then(function(balance) {
-        account_one_ending_balance = balance.toNumber();
-        return coin.balanceOf.call(account_two);
-      }).then(function(balance) {
+      return coin.transfer(account_two, amount, {from: account_one});}).then(function() {
+      return coin.balanceOf.call(account_one);  }).then(function(balance) {
+      account_one_ending_balance = balance.toNumber();
+      return coin.balanceOf.call(account_two);}).then(function(balance) {
         account_two_ending_balance = balance.toNumber();
 
         assert.equal(account_one_ending_balance, account_one_starting_balance - amount, "Amount wasn't correctly taken from the sender");
         assert.equal(account_two_ending_balance, account_two_starting_balance + amount, "Amount wasn't correctly sent to the receiver");
-      });
+    });
   });
   it("should transfer ownership by owner", function() {
     var coin = TheCoin.deployed();
     coin.transferOwnership(accounts[1], {from: accounts[0]});
-    return coin.owner.call().then(
-      function(newOwner){
-          assert.equal(newOwner, accounts[1],"Ownership was not changed correctly");
-      });
+    return coin.owner.call().then(function(newOwner){
+        assert.equal(newOwner, accounts[1],"Ownership was not changed correctly");
+    });
   });   
   it("should transfer ownership by owner only", function() {
     var coin = TheCoin.deployed();
     coin.transferOwnership(accounts[3], {from: accounts[2]})
-    return coin.owner.call().then(
-      function(newOwner){
-          assert.notEqual(newOwner, accounts[3],"Ownership was incorrectly chnaged by non-owner");
-          return coin.transferOwnership(accounts[0], {from: accounts[1]});
-      });
+    return coin.owner.call().then(function(newOwner){
+      assert.notEqual(newOwner, accounts[3],"Ownership was incorrectly chnaged by non-owner");
+    return coin.transferOwnership(accounts[0], {from: accounts[1]});
+    });
   }); 
     it("should mintTokens by owner", function() {
     var coin = TheCoin.deployed();
     coin.mintToken(accounts[4], 10, {from: accounts[0]});
-    return coin.balanceOf.call(accounts[4], {from: accounts[0]}).then(
-      function(balance){
-          assert.equal(balance,10, "Tokens were not minted");
-      });
+    return coin.balanceOf.call(accounts[4], {from: accounts[0]}).then(function(balance){
+      assert.equal(balance,10, "Tokens were not minted");
+    });
   });  
     it("should mintTokens by owner only", function() {
     var coin = TheCoin.deployed();
     coin.mintToken(accounts[4], 10, {from: accounts[1]});
-    return coin.balanceOf.call(accounts[4], {from: accounts[0]}).then(
-      function(balance){
-          assert.equal(balance,10, "Tokens were not minted");
-      });
+    return coin.balanceOf.call(accounts[4], {from: accounts[0]}).then(function(balance){
+      assert.equal(balance,10, "Tokens were not minted");
+    });
   });  
   it("should freeze account by owner", function() {
     var coin = TheCoin.deployed();
     coin.freezeAccount(accounts[4], true, {from: accounts[0]});
-    return coin.frozenAccount.call(accounts[4], {from: accounts[0]}).then(
-      function(frozen){
-          assert.isTrue(frozen, "Account was not frozen correctly");
-      });
+    return coin.frozenAccount.call(accounts[4], {from: accounts[0]}).then(function(frozen){
+      assert.isTrue(frozen, "Account was not frozen correctly");
+    });
   });   
   it("should freeze account by owner only", function() {
     var coin = TheCoin.deployed();
     coin.freezeAccount(accounts[5], true, {from: accounts[1]});
-    return coin.frozenAccount.call(accounts[5], {from: accounts[0]}).then(
-      function(frozen){
-        var isTrue = frozen == false;
-          assert.isTrue(isTrue, "Account was frozen incorrectly");
-      });
+    return coin.frozenAccount.call(accounts[5], {from: accounts[0]}).then(function(frozen){
+      var isTrue = frozen == false;
+      assert.isTrue(isTrue, "Account was frozen incorrectly");
+    });
   });   
   it("shouldn't transfer from a frozen account", function() {
     var coin = TheCoin.deployed();
 
     return coin.transfer(accounts[1], 10, {from: accounts[0]}).then(function(result) {
-      return coin.freezeAccount(accounts[1], true, {from: accounts[0]});
-      }).then(function() {
-      return coin.transfer.call(accounts[2], 5, {from: accounts[1]});
-      }).then(function(txed) {
-        var isTrue = !txed;
-        assert.isTrue(isTrue,"failed transfer didn't return false");
-      return coin.freezeAccount(accounts[1], false, {from: accounts[0]});
+    return coin.freezeAccount(accounts[1], true, {from: accounts[0]});}).then(function() {
+    return coin.transfer.call(accounts[2], 5, {from: accounts[1]});}).then(function(txed) {
+      var isTrue = !txed;
+      assert.isTrue(isTrue,"failed transfer didn't return false");
+    return coin.freezeAccount(accounts[1], false, {from: accounts[0]});
     });
   }); 
   it("should approve account by owner", function() {
     var coin = TheCoin.deployed();
     coin.approveAccount(accounts[4], true, {from: accounts[0]});
-    return coin.approvedAccount.call(accounts[4], {from: accounts[0]}).then(
-      function(approved){
-          assert.isTrue(approved, "Account was not approved correctly");
-      });
+    return coin.approvedAccount.call(accounts[4], {from: accounts[0]}).then(function(approved){
+      assert.isTrue(approved, "Account was not approved correctly");
+    });
   }); 
   it("should set prices by owner", function() {
     var coin = TheCoin.deployed();
     coin.setPrices(42, 21, {from: accounts[0]});
-    return coin.sellPrice.call({from: accounts[0]}).then(
-      function(sell){
-          assert.equal(sell, 42, "Sell price not set correctly");
-          return coin.buyPrice.call({from: accounts[0]}).then(
-            function(buy){
-              assert.equal(buy, 21, "Buy price not set correctly");
-          });
-      });
+    return coin.sellPrice.call({from: accounts[0]}).then(function(sell){
+      assert.equal(sell, 42, "Sell price not set correctly");
+    return coin.buyPrice.call({from: accounts[0]}).then(function(buy){
+      assert.equal(buy, 21, "Buy price not set correctly");
+    });
+    });
   });
   it("should set prices by owner only", function() {
     var coin = TheCoin.deployed();
@@ -209,4 +188,54 @@ contract('TheCoin', function(accounts) {
           });
       });
   });  
+  it("shouldn 't buy more than contract balance", function() {
+    var coin = TheCoin.deployed();
+    coin.setPrices(1, 1, {from: accounts[0]});
+    return coin.buy.call(220000000).then(function(amount){
+        assert.equal(amount,0, "Should not be able to buy more than contract holds on account");
+    });
+  }); 
+    it("should sell when have owned tokens", function() {
+    var coin = TheCoin.deployed();
+    // Get initial balances of first and second account.
+    var account_one = accounts[0];
+    var account_one_starting_balance;
+    var account_one_ending_balance;
+    var amount = 10;
+
+    coin.setPrices(1, 1, {from: accounts[0]});
+    return coin.balanceOf.call(account_one).then(function(balance) {
+      account_one_starting_balance = balance.toNumber();
+    return coin.sell(amount, {from: account_one});}).then(function() {
+    return coin.balanceOf.call(account_one);}).then(function(balance) {
+      account_one_ending_balance = balance.toNumber();
+      assert.equal(account_one_ending_balance, account_one_starting_balance - amount, "Incorrect number of tokens were sold");
+      });
+    });   
+    it("should buy from contract", function() {
+      var coin = TheCoin.deployed();
+      // Get initial balances of first and second account.
+      var account_one = accounts[0];
+      var account_one_starting_balance;
+      var account_one_ending_balance;
+      var amount = 10;
+
+      coin.setPrices(1, 1, {from: accounts[0]});
+      return coin.sell(amount, {from: account_one}).then(function(){
+      return coin.balanceOf.call(account_one).then(function(balance) {
+        account_one_starting_balance = balance.toNumber();
+      return coin.buy(amount, {from: account_one});}).then(function() {
+      return coin.balanceOf.call(account_one);}).then(function(balance) {
+        account_one_ending_balance = balance.toNumber();
+        assert.equal(account_one_ending_balance, account_one_starting_balance, "Incorrect number of tokens were bought");
+        });
+      });
+    }); 
+  it("shouldn 't sell more than acccount balance", function() {
+    var coin = TheCoin.deployed();
+    coin.setPrices(1, 1, {from: accounts[0]});
+    return coin.sell.call(220000000, {from: accounts[0]}).then(function(amount){
+      assert.equal(amount,0, "Should not be able to sell more than account holds on account");
+    });
+  }); 
 });
