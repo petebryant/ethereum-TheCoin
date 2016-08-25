@@ -1,118 +1,65 @@
+import "TokenRecipient.sol";
 
-import "Owned.sol";
-
-contract TheCoin is Owned {
-    mapping (address => uint256) public balanceOf;
-    mapping (address => bool) public frozenAccount;
-    mapping (address => bool) public approvedAccount;
+contract TheCoin {
+    string public standard = "TheCoin 1.0";
     string public name;
     string public symbol;
     uint8 public decimals;
     uint256 public totalSupply;
-    uint256 public sellPrice;
-    uint256 public buyPrice;
+
+    mapping (address => uint256) public balanceOf;
+    mapping (address => mapping (address => uint256)) public allowance;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event FrozenFunds(address indexed sender, address target, bool frozen);
-    event ApprovedAccount(address indexed sender, address target, bool approved);
 
     function TheCoin(
-        uint256 initialSupply, 
         string tokenName, 
         uint8 decimalUnits, 
         string tokenSymbol) {
 
-        totalSupply = initialSupply;
-        balanceOf[msg.sender] = initialSupply;
         name = tokenName;
         decimals = decimalUnits;
         symbol = tokenSymbol;
     }
 
-    function freezeAccount(address target, bool freeze) onlyOwner {
-        frozenAccount[target] = freeze;
-        FrozenFunds(msg.sender, target, freeze);
-    }
-
-    function approveAccount(address target, bool approved) onlyOwner {
-        approvedAccount[target] = approved;
-        ApprovedAccount(msg.sender, target, approved);
-    }
-
-    function mintToken(address target, uint256 mintedAmount) onlyOwner {
-
-        balanceOf[target] += mintedAmount;
-        totalSupply += mintedAmount;
-        Transfer(0, owner, mintedAmount);
-        Transfer(owner, target, mintedAmount);
-    }
-
-    function transfer(address to, uint256 value) public returns(bool result) {
+    function transfer(address _to, uint256 _value) {
         
-        if (frozenAccount[msg.sender]) {
-            msg.sender.send(value);
-            return false;
-        }
+        if (balanceOf[msg.sender] < _value) throw;
+        if (balanceOf[_to] + _value < balanceOf[_to]) throw;
 
-        if (!approvedAccount[msg.sender]) {
-            msg.sender.send(value);
-            return false;
-        }
+        balanceOf[msg.sender] -= _value;
+        balanceOf[_to] += _value;
 
-        if (balanceOf[msg.sender] < value || balanceOf[to] + value < balanceOf[to]) {
-            msg.sender.send(value);
-            return false;
-        }
+        Transfer(msg.sender, _to , _value);
+    }
 
-        balanceOf[msg.sender] -= value;
-        balanceOf[to] += value;
+    function approveAndCall(address _spender, uint256 _value, bytes _extraData)
+        returns (bool success){
 
-        Transfer(msg.sender, to , value);
+        allowance[msg.sender][_spender]  = _value;
+        TokenRecipient spender = TokenRecipient(_spender);
+        spender.recieveApproval(msg.sender, _value, this, _extraData);
+        
+        return true;
+    }
+
+    function transferFrom(address _from, address _to, uint256 _value) returns (bool success){
+
+        if (balanceOf[_from] < _value) throw;
+        if (balanceOf[_to] + _value < balanceOf[_to]) throw;
+        if (_value > allowance[_from][msg.sender]) throw;
+
+        balanceOf[_from] -= _value;
+        balanceOf[_to] += _value;
+        allowance[_from][msg.sender] -= _value;
+
+        Transfer(_from,_to, _value);
 
         return true;
     }
 
-    function setPrices(uint256 newSellPrice, uint256 newBuyPrice) onlyOwner {
-        // TODO hook this up to a standard data feed to have a floating price
-        // http://github.com/ethereum/wiki/wiki/standardized_contract_apis#data-feed
-        sellPrice = newSellPrice;
-        buyPrice = newBuyPrice;
-    }
-
-    function contractBalance() public returns (uint bal){
-        return this.balance;
-    }
-
-
-    function buy() public returns(uint){
-        var amount = msg.value / buyPrice;
-
-        if (balanceOf[this] < amount) {
-            return 0;
-        }
-
-        balanceOf[msg.sender] += amount;
-        balanceOf[this] -= amount;
-
-        Transfer(this, msg.sender, amount);
-
-        return amount;
-    }
-
-    function sell(uint amount) returns(uint revenue){
-        if (balanceOf[msg.sender] < amount) {
-            return 0;
-        }
-
-        balanceOf[this] += amount;
-        balanceOf[msg.sender] -= amount;
-        revenue = amount * sellPrice;
-
-        if (!msg.sender.send(revenue)){
-            return 0;
-        } else {
-            Transfer(msg.sender, this, amount);
-            return revenue;
-        } 
+    /* this unnamed function is called whenever some tries to send ether to the contract */
+    function(){
+        throw;
     }
 }

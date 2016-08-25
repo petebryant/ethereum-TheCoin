@@ -1,4 +1,3 @@
 module.exports = function(deployer) {
-  deployer.deploy(Owned),
-  deployer.deploy(TheCoin, 21000000, "TheCoin", 2, "#");
+  deployer.deploy(TheAdvancedCoin, 21000000, "TheCoin 1.0", 2, "#", 0);
 };
