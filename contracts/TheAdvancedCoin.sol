@@ -74,6 +74,21 @@ contract TheAdvancedCoin is Owned, TheCoin {
         buyPrice = _newBuyPrice;
     } 
 
+    function sell(uint _amount) returns (uint revenue) {
+        if (balanceOf[msg.sender] < _amount) throw;
+
+        balanceOf[this] += _amount;
+        balanceOf[msg.sender] -= _amount;
+        revenue = _amount * sellPrice;
+
+        if (!msg.sender.send(revenue)){
+           throw;
+        } else {
+            Transfer(msg.sender, this, _amount);
+            return revenue;
+        } 
+    } 
+
     function buy() {
         var amount = msg.value / buyPrice;
 
@@ -85,16 +100,9 @@ contract TheAdvancedCoin is Owned, TheCoin {
         Transfer(this, msg.sender, amount);
     }
 
-    function sell(uint256 _amount) {
-        if (balanceOf[msg.sender] < _amount) throw;
+ 
 
-        balanceOf[this] += _amount;
-        balanceOf[msg.sender] -= _amount;
-
-        if (!msg.sender.send(_amount * sellPrice)){
-            throw;
-        } else {
-            Transfer(msg.sender, this, _amount);
-        } 
-    }       
+    function contractBalance() returns (uint256 balance) {
+        return balanceOf[this];
+    }     
 }  

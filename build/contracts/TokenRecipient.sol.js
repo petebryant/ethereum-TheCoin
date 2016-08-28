@@ -349,7 +349,7 @@ var Web3 = require("web3");
         "type": "function"
       }
     ],
-    "updated_at": 1472147256068,
+    "updated_at": 1472230994807,
     "links": {}
   }
 };

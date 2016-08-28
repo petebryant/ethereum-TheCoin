@@ -120,18 +120,67 @@ contract('TheAdvancedCoin', function(accounts) {
       });
     });
   }); 
-  if("should sell tokens", function(){
-
-  });  
-  if("should buy tokens", function(){
-    var coin = TheAdvancedCoin.deployed();
+  it("should sell tokens", function(){
     var coin = TheAdvancedCoin.deployed();
     var accOne = accounts[0];
-    var accTwo = accounts[1];
-    var amount = 10;
+    var amount = 100;
     var accOneStart;
-    var accTwoStart;
     var accOneEnd;
-    var accTwoEnd;
+
+    coin.setPrices(40, 20, {from: accOne});  
+    return coin.sellPrice.call({from: accOne}).then(function(sell){
+    console.log("Sell price: " + sell);
+      return coin.balanceOf.call(accOne).then(function(balance) {
+        accOneStart = balance.toNumber();     
+        console.log("Balance start: " + accOneStart);
+        return coin.sell(amount, {from: accOne}).then(function(revenue){
+          console.log("Revenue: " + revenue.tonumber());
+          return coin.balanceOf.call(accOne).then(function(balance) {
+            accOneEnd = balance.toNumber(); 
+            console.log("Balance end: " + accOneEnd);
+            assert.equal(accOneEnd, accOneStart - amount, "Amount wasn't correctly sold by the sender");
+              return coin.contractBalance.call().then(function(balance){
+              console.log("Contract balance: " + balance);
+              assert.equal(balance, amount, "Amount wasn't correctly bought by contract");
+            });
+          });
+        });
+      }); 
+    });
+  });  
+  it("should buy tokens", function(){
+    var coin = TheAdvancedCoin.deployed();
+    var accOne = accounts[0];
+    var amount = 200;
+    var accOneStart;
+    var accOneEnd;
+    var contractBalance;
+    var tokens;
+
+    coin.setPrices(40, 20, {from: accOne});  
+    return coin.buyPrice.call({from: accOne}).then(function(buy){
+    tokens = amount / buy;
+    console.log("Buy price: " + buy);
+    console.log("buying: " + tokens);
+      return coin.contractBalance.call().then(function(balance){
+        contractBalance = balance.toNumber();
+        console.log("Contract balance: " + balance);
+        return coin.balanceOf.call(accOne).then(function(balance) {
+          accOneStart = balance.toNumber();     
+          console.log("Balance start: " + accOneStart);
+          return coin.buy(amount, {from: accOne}).then(function(){
+            return coin.contractBalance.call().then(function(balance){
+            console.log("Contract balance: " + balance);
+            assert.equal(contractBalance, balance - tokens, "Amount wasn't correctly sold by contract");
+            return coin.balanceOf.call(accOne).then(function(balance) {
+              accOneEnd = balance.toNumber(); 
+              console.log("Balance end: " + accOneEnd);
+              assert.equal(accOneEnd, accOneStart + tokens, "Amount wasn't correctly bought by the sender");
+              });
+            });
+          });
+        });
+      }); 
+    });
   }); 
 });
