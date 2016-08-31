@@ -17,10 +17,9 @@ contract TheAdvancedCoin is Owned, TheCoin {
             uint8 decimalUnits, 
             string tokenSymbol,
             address centralMinter
-        ) TheCoin( tokenName, decimalUnits, tokenSymbol)
-        {
-            if (centralMinter != 0) owner = centralMinter;
-            balanceOf[owner] = initialSupply;
+        ) TheCoin(initialSupply, tokenName, decimalUnits, tokenSymbol) {
+
+        if (centralMinter != 0) owner = centralMinter;
     }
 
     function transfer(address _to, uint256 _value) {
@@ -35,7 +34,7 @@ contract TheAdvancedCoin is Owned, TheCoin {
         Transfer(msg.sender, _to , _value);
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) returns (bool success){
+    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
         
         if (frozenAccount[_from]) throw;
         if (balanceOf[_from] < _value) throw;
@@ -55,7 +54,6 @@ contract TheAdvancedCoin is Owned, TheCoin {
 
         balanceOf[_target] += _mintedAmount;
         totalSupply += _mintedAmount;
-        
         Transfer(0, owner, _mintedAmount);
         Transfer(owner, _target, _mintedAmount);
     }
@@ -63,7 +61,6 @@ contract TheAdvancedCoin is Owned, TheCoin {
     function freezeAccount(address _target, bool _freeze) onlyOwner {
 
         frozenAccount[_target] = _freeze;
-
         FrozenFunds(_target, _freeze);
     } 
 
@@ -75,6 +72,7 @@ contract TheAdvancedCoin is Owned, TheCoin {
     } 
 
     function sell(uint _amount) returns (uint revenue) {
+
         if (balanceOf[msg.sender] < _amount) throw;
 
         balanceOf[this] += _amount;
@@ -90,6 +88,7 @@ contract TheAdvancedCoin is Owned, TheCoin {
     } 
 
     function buy() {
+
         var amount = msg.value / buyPrice;
 
         if (balanceOf[this] < amount) throw;
@@ -103,6 +102,7 @@ contract TheAdvancedCoin is Owned, TheCoin {
  
 
     function contractBalance() returns (uint256 balance) {
+        
         return balanceOf[this];
     }     
 }  

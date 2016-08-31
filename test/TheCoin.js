@@ -168,7 +168,7 @@ contract('TheAdvancedCoin', function(accounts) {
         return coin.balanceOf.call(accOne).then(function(balance) {
           accOneStart = balance.toNumber();     
           console.log("Balance start: " + accOneStart);
-          return coin.buy(amount, {from: accOne}).then(function(){
+          return coin.buy({value: web3.toWei(amount,'ether')}, {from: accOne}).then(function(){
             return coin.contractBalance.call().then(function(balance){
             console.log("Contract balance: " + balance);
             assert.equal(contractBalance, balance - tokens, "Amount wasn't correctly sold by contract");

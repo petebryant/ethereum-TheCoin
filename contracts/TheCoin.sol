@@ -13,10 +13,12 @@ contract TheCoin {
     event Transfer(address indexed from, address indexed to, uint256 value);
 
     function TheCoin(
+        uint256 initialSupply,
         string tokenName, 
         uint8 decimalUnits, 
         string tokenSymbol) {
 
+        balanceOf[msg.sender] = initialSupply;
         name = tokenName;
         decimals = decimalUnits;
         symbol = tokenSymbol;
@@ -34,7 +36,7 @@ contract TheCoin {
     }
 
     function approveAndCall(address _spender, uint256 _value, bytes _extraData)
-        returns (bool success){
+        returns (bool success) {
 
         allowance[msg.sender][_spender]  = _value;
         TokenRecipient spender = TokenRecipient(_spender);
@@ -43,7 +45,7 @@ contract TheCoin {
         return true;
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) returns (bool success){
+    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
 
         if (balanceOf[_from] < _value) throw;
         if (balanceOf[_to] + _value < balanceOf[_to]) throw;
@@ -58,8 +60,9 @@ contract TheCoin {
         return true;
     }
 
-    /* this unnamed function is called whenever some tries to send ether to the contract */
-    function(){
+    /* this unnamed function is called whenever someone tries to send ether to the contract */
+    function() {
+
         throw;
     }
 }
