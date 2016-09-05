@@ -120,6 +120,7 @@ contract('TheAdvancedCoin', function(accounts) {
       });
     });
   }); 
+  /*
   it("should sell tokens", function(){
     var coin = TheAdvancedCoin.deployed();
     var accOne = accounts[0];
@@ -160,6 +161,7 @@ contract('TheAdvancedCoin', function(accounts) {
     coin.setPrices(40, 20, {from: accOne});  
     return coin.buyPrice.call({from: accOne}).then(function(buy){
     tokens = amount / buy;
+    console.log("Address: " + coin.address);
     console.log("Buy price: " + buy);
     console.log("buying: " + tokens);
       return coin.contractBalance.call().then(function(balance){
@@ -183,4 +185,5 @@ contract('TheAdvancedCoin', function(accounts) {
       }); 
     });
   }); 
+  */
 });
